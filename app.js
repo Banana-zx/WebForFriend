@@ -7,11 +7,15 @@ async function apiGet(url) {
 }
 async function apiPost(url, body) {
   const r = await fetch(API_BASE + url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
-  return r.json();
+  const data = await r.json();
+  if (!r.ok) throw new Error(data && data.error ? data.error : 'HTTP ' + r.status);
+  return data;
 }
 async function apiPut(url, body) {
   const r = await fetch(API_BASE + url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
-  return r.json();
+  const data = await r.json();
+  if (!r.ok) throw new Error(data && data.error ? data.error : 'HTTP ' + r.status);
+  return data;
 }
 async function apiDel(url) {
   const r = await fetch(API_BASE + url, { method: 'DELETE' });
@@ -196,7 +200,8 @@ document.getElementById('btnSavePost').addEventListener('click', async () => {
   if (editingId) {
     await apiPut('/api/posts/' + editingId, { author, footWash, shoeCare, sockCare, spray, imageData });
   } else {
-    await apiPost('/api/posts', { author, footWash, shoeCare, sockCare, spray, imageData });
+    const id = 'p_' + Date.now();
+    await apiPost('/api/posts', { id, author, footWash, shoeCare, sockCare, spray, imageData });
   }
   resetForm();
 });
