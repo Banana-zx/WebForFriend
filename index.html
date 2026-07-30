@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray</h1>
+      <nav class="mode" aria-label="โหมดใช้งาน">
+        <button id="btnViewer" type="button">Viewer</button>
+        <button id="btnEditor" type="button">Editor</button>
+      </nav>
+    </header>
+
+    <main id="app">
+      <section id="viewerPanel" class="panel" aria-label="รายการกระทู้">
+        <div id="postsList" class="postsList"></div>
+      </section>
+
+      <section id="editorLogin" class="panel hidden login" aria-label="ล็อกอิน Editor">
+        <div class="card loginWrap">
+          <div class="card">
+            <h2>ล็อกอินผู้บริหาร (Editor)</h2>
+            <label for="editorPassword">รหัสผ่าน</label>
+            <input id="editorPassword" type="password" autocomplete="current-password" />
+            <button id="btnLogin" type="button">เข้าสู่ระบบ</button>
+            <p id="loginMsg" class="msg" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <section id="editorPanel" class="panel hidden" aria-label="จัดการกระทู้">
+        <div class="actions">
+          <button id="btnNewPost" type="button">+ เพิ่มสมาชิก / สร้างกระทู้ใหม่</button>
+          <button id="btnLogout" type="button">Logout</button>
+        </div>
+        <div id="postsListEditable" class="postsList"></div>
+      </section>
+
+      <section id="postForm" class="panel hidden" aria-label="แบบฟอร์มกระทู้">
+        <div class="card">
+          <h2 id="formTitle">เพิ่มสมาชิก / สร้างกระทู้ใหม่</h2>
+          <div class="form">
+            <label for="pAuthor">ชื่อผู้ใช้งาน</label>
+            <input id="pAuthor" type="text" autocomplete="name" />
+
+            <fieldset style="border:1px solid var(--line);border-radius:12px;padding:10px 12px">
+              <legend style="padding:0 6px;font-size:14px;color:var(--muted)">รูปภาพ</legend>
+              <label for="pImageFile">อัปโหลดไฟล์</label>
+              <input id="pImageFile" type="file" accept="image/*" />
+              <label for="pImageUrl">หรือวางลิงก์ URL</label>
+              <input id="pImageUrl" type="url" placeholder="https://..." />
+            </fieldset>
+
+            <label for="pFootWash">การดูแลเท้า ล้างวันละกี่ครั้ง (ครั้ง/วัน)</label>
+            <input id="pFootWash" type="number" min="0" step="1" inputmode="numeric" />
+
+            <label for="pShoeCare">การดูแลรองเท้า ซักหรือยัง</label>
+            <select id="pShoeCare">
+              <option value="">เลือก...</option>
+              <option value="ใช่">ใช่</option>
+              <option value="ไม่">ไม่</option>
+            </select>
+
+            <label for="pSockCare">การดูแลถุงเท้า</label>
+            <select id="pSockCare">
+              <option value="">เลือก...</option>
+              <option value="ซักทุกวัน">ซักทุกวัน</option>
+              <option value="เปลี่ยนถุงเท้าทุกวัน">เปลี่ยนถุงเท้าทุกวัน</option>
+            </select>
+
+            <label for="pSpray">ใช้สเปรย์ดับกลิ่นเท้า (ครั้ง/สัปดาห์)</label>
+            <input id="pSpray" type="number" min="0" step="1" inputmode="umeric" />
+
+            <div class="formActions">
+              <button id="btnSavePost" type="button">บันทึก</button>
+              <button id="btnCancelPost" type="button">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="commentsPanel" class="panel hidden" aria-label="ความคิดเห็น">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>ความคิดเห็น</h2>
+            <button id="btnCloseComments" class="small" type="button">ปิด</button>
+          </div>
+          <div id="commentsArea"></div>
+          <div style="margin-top:10px">
+            <label for="commentName">ชื่อของคุณ (ไม่จำเป็น)</label>
+            <input id="commentName" type="text" autocomplete="name" />
+            <label for="commentText">ความคิดเห็น</label>
+            <textarea id="commentText" rows="3"></textarea>
+            <label for="commentRating">คะแนน (1-10): <span id="ratingValue" aria-live="polite">5</span></label>
+            <input id="commentRating" type="range" min="1" max="10" value="5" />
+            <button id="btnAddComment" type="button">ส่งความคิดเห็น</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <small>ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray • ข้อมูลเก็บบนเว็บ</small>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

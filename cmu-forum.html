@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray</title>
+
+  <style>
+/* ---------- mobile-first ---------- */
+* { box-sizing: border-box; }
+:root { --bg:#f6f7fa; --card:#fff; --ink:#1f2229; --muted:#6b7280; --line:#e5e7eb; --brand:#2563eb; }
+html,body { margin:0; padding:0; font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans Thai", "Prompt", sans-serif; background: var(--bg); color: var(--ink); }
+.container { max-width: 720px; margin: 0 auto; padding: 14px; }
+header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 14px; }
+h1 { font-size: 20px; margin:0; }
+.mode { display:grid; grid-template-columns: 1fr 1fr; gap:8px; width: 220px; }
+.mode button { background: var(--brand); color:#fff; border:0; padding: 10px; border-radius: 10px; font-size: 16px; }
+.mode button.active { outline: 3px solid #93c5fd; }
+.panel.hidden { display:none !important; }
+.card { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 16px; box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border-width:0; }
+/* login */
+.loginWrap { display:flex; align-items:center; justify-content:center; min-height: 60vh; }
+.login .card { max-width: 360px; width: 100%; }
+.login h2 { margin:4px 0 12px; }
+.msg { color:#dc2626; min-height: 1.2em; }
+/* posts */
+.postsList { display:flex; flex-direction: column; gap: 14px; }
+.postCard { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 14px; }
+.postCard img { width:100%; height: auto; max-height: 420px; object-fit: cover; border-radius: 12px; background:#eef2ff; }
+.postMeta { margin-top:10px; font-size: 14px; color: var(--muted); }
+.postTitle { margin: 4px 0; font-size: 18px; }
+.row { display:flex; justify-content:space-between; gap: 8px; padding: 8px 0; border-top: 1px dashed var(--line); font-size: 15px; }
+.row .label { color: var(--muted); }
+.row .value { font-weight: 700; max-width: 55%; text-align:right; word-break: break-word; }
+.actions { display:flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+button { background:#111827; color:#fff; border:0; padding: 10px 14px; border-radius: 10px; font-size: 15px; cursor:pointer; }
+button.small { padding: 8px 10px; font-size: 14px; }
+input,select,textarea { width:100%; margin: 6px 0 12px; padding: 10px 12px; border:1px solid var(--line); border-radius: 10px; font-size: 16px; background:#fff; }
+.form label { display:block; margin-top: 10px; font-size: 15px; }
+.formActions { display:flex; gap: 8px; }
+footer { margin-top: 18px; color: var(--muted); text-align:center; font-size: 12px; }
+.commentBlock { border-top: 1px solid var(--line); padding: 10px 0; }
+.commentHeader { display:flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.commentText { margin: 4px 0; font-size: 15px; word-break: break-word; }
+.addComment { margin-top: 10px; }
+.avg { background:#fffbeb; border:1px solid #fde68a; color:#78350f; padding: 8px 10px; border-radius: 10px; margin: 10px 0; }
+@media (pointer: coarse) { button, input, select, textarea { min-height: 44px; } }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray</h1>
+      <nav class="mode" aria-label="โหมดใช้งาน">
+        <button id="btnViewer" type="button">Viewer</button>
+        <button id="btnEditor" type="button">Editor</button>
+      </nav>
+    </header>
+
+    <main id="app">
+      <!-- Viewer -->
+      <section id="viewerPanel" class="panel" aria-label="รายการกระทู้">
+        <div id="postsList" class="postsList"></div>
+      </section>
+
+      <!-- Editor login -->
+      <section id="editorLogin" class="panel hidden login" aria-label="ล็อกอิน Editor">
+        <div class="card loginWrap">
+          <div class="card">
+            <h2>ล็อกอินผู้บริหาร (Editor)</h2>
+            <label for="editorPassword">รหัสผ่าน</label>
+            <input id="editorPassword" type="password" autocomplete="current-password" />
+            <button id="btnLogin" type="button">เข้าสู่ระบบ</button>
+            <p id="loginMsg" class="msg" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Editor dashboard -->
+      <section id="editorPanel" class="panel hidden" aria-label="จัดการกระทู้">
+        <div class="actions">
+          <button id="btnNewPost" type="button">+ เพิ่มสมาชิก / สร้างกระทู้ใหม่</button>
+          <button id="btnLogout" type="button">Logout</button>
+        </div>
+        <div id="postsListEditable" class="postsList"></div>
+      </section>
+
+      <!-- New / Edit form -->
+      <section id="postForm" class="panel hidden" aria-label="แบบฟอร์มกระทู้">
+        <div class="card">
+          <h2 id="formTitle">เพิ่มสมาชิก / สร้างกระทู้ใหม่</h2>
+          <div class="form">
+            <label for="pAuthor">ชื่อผู้ใช้งาน</label>
+            <input id="pAuthor" type="text" autocomplete="name" />
+            <fieldset style="border:1px solid var(--line);border-radius:12px;padding:10px 12px">
+              <legend style="padding:0 6px;font-size:14px;color:var(--muted)">รูปภาพ</legend>
+              <label for="pImageFile">อัปโหลดไฟล์</label>
+              <input id="pImageFile" type="file" accept="image/*" />
+              <label for="pImageUrl">หรือวางลิงก์ URL</label>
+              <input id="pImageUrl" type="url" placeholder="https://..." />
+            </fieldset>
+            <label for="pFootWash">การดูแลเท้า ล้างวันละกี่ครั้ง (ครั้ง/วัน)</label>
+            <input id="pFootWash" type="number" min="0" step="1" inputmode="numeric" />
+            <label for="pShoeCare">การดูแลรองเท้า ซักหรือยัง</label>
+            <select id="pShoeCare">
+              <option value="">เลือก...</option>
+              <option value="ใช่">ใช่</option>
+              <option value="ไม่">ไม่</option>
+            </select>
+            <label for="pSockCare">การดูแลถุงเท้า</label>
+            <select id="pSockCare">
+              <option value="">เลือก...</option>
+              <option value="ซักทุกวัน">ซักทุกวัน</option>
+              <option value="เปลี่ยนถุงเท้าทุกวัน">เปลี่ยนถุงเท้าทุกวัน</option>
+            </select>
+            <label for="pSpray">ใช้สเปรย์ดับกลิ่นเท้า (ครั้ง/สัปดาห์)</label>
+            <input id="pSpray" type="number" min="0" step="1" inputmode="numeric" />
+            <div class="formActions">
+              <button id="btnSavePost" type="button">บันทึก</button>
+              <button id="btnCancelPost" type="button">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comments -->
+      <section id="commentsPanel" class="panel hidden" aria-label="ความคิดเห็น">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>ความคิดเห็น</h2>
+            <button id="btnCloseComments" class="small" type="button">ปิด</button>
+          </div>
+          <div id="commentsArea"></div>
+          <div style="margin-top:10px">
+            <label for="commentName">ชื่อของคุณ (ไม่จำเป็น)</label>
+            <input id="commentName" type="text" autocomplete="name" />
+            <label for="commentText">ความคิดเห็น</label>
+            <textarea id="commentText" rows="3"></textarea>
+            <label for="commentRating">คะแนน (1-10): <span id="ratingValue" aria-live="polite">5</span></label>
+            <input id="commentRating" type="range" min="1" max="10" value="5" />
+            <button id="btnAddComment" type="button">ส่งความคิดเห็น</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer><small>ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray • ข้อมูลเก็บในอุปกรณ์นี้เท่านั้น</small></footer>
+  </div>
+
+
+  <script>
+// ---------- storage + state ----------
+const STORAGE_KEY = 'cmu_forum_posts_v1';
+function loadPosts() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch (e) { return []; }
+}
+function savePosts(posts) { localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)); }
+let posts = loadPosts() || [];
+let isEditor = false;
+let editingId = null;
+let currentPostId = null;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+// ---------- uid ----------
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+// ---------- escape ----------
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"'/]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;'}[ch] || ch));
+}
+
+// ---------- panel ----------
+const PANELS = ['viewerPanel','editorLogin','editorPanel','postForm','commentsPanel'];
+function showOnly(id) {
+  PANELS.forEach(x => {
+    const el = document.getElementById(x);
+    if (x === id) el.classList.remove('hidden'); else el.classList.add('hidden');
+  });
+  // on mobile, avoid keyboard covering form focuses
+  if (id === 'postForm' || id === 'commentsPanel') {
+    setTimeout(() => el && el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
+}
+
+// ---------- render ----------
+function avg(comments) {
+  if (!comments.length) return 0;
+  const sum = comments.reduce((s, c) => s + Number(c.rating || 0), 0);
+  return sum / comments.length;
+}
+function avgLabel(post) {
+  const a = post && post.comments ? avg(post.comments) : 0;
+  return a ? a.toFixed(1) : '-';
+}
+function cardHtml(post, mode) {
+  const commentCount = ((post && post.comments) ? post.comments : []).length;
+  const isV = mode === 'viewer';
+  const editButtons = !isV ? `
+    <button type="button" data-action="edit" data-id="${post.id}">แก้ไข</button>
+    <button type="button" data-action="delete" data-id="${post.id}">ลบ</button>
+  ` : '';
+  return `
+    <article class="postCard" data-id="${post.id}">
+      ${post.imageData ? `<img src="${escapeHtml(post.imageData)}" alt="รูปผู้ใช้งาน" loading="lazy" />` : '<div style="height:220px;background:#eef2ff;border-radius:12px"></div>'}
+      <div class="postMeta">ผู้สร้างกระทู้: <strong>${escapeHtml(post.author || '')}</strong></div>
+      <div class="postTitle">CMU Care Foot</div>
+      <div class="row"><span class="label">การดูแลเท้า ล้าง/วัน</span><span class="value">${escapeHtml(String(post.footWash ?? ''))}</span></div>
+      <div class="row"><span class="label">ซักรองเท้า</span><span class="value">${escapeHtml(String(post.shoeCare ?? ''))}</span></div>
+      <div class="row"><span class="label">การดูแลถุงเท้า</span><span class="value">${escapeHtml(String(post.sockCare ?? ''))}</span></div>
+      <div class="row"><span class="label">สเปรย์กำจัดกลิ่น/สัปดาห์</span><span class="value">${escapeHtml(String(post.spray ?? ''))}</span></div>
+      <div class="row"><span class="label">คะแนนเฉลี่ย</span><span class="value" data-avg="${post.comments ? avg(post.comments).toFixed(2) : 0}">${avgLabel(post)} / 10</span></div>
+      <div class="actions">
+        ${editButtons}
+        <button type="button" data-action="comments" data-id="${post.id}">Comment (${commentCount})</button>
+      </div>
+    </article>
+  `;
+}
+function render() {
+  if (isEditor) {
+    showOnly('editorPanel');
+    const container = document.getElementById('postsListEditable');
+    container.innerHTML = posts.length ? posts.map(p => cardHtml(p, 'editor')).join('') : '<p class="avg">ยังไม่มีกระทู้</p>';
+    bindPostActions();
+  } else {
+    showOnly('viewerPanel');
+    const container = document.getElementById('postsList');
+    container.innerHTML = posts.length ? posts.map(p => cardHtml(p, 'viewer')).join('') : '<p class="avg">ยังไม่มีกระทู้</p>';
+    bindPostActions();
+  }
+}
+function bindPostActions() {
+  $$('button[data-action="edit"]').forEach(b => b.addEventListener('click', () => openForm(b.dataset.id)));
+  $$('button[data-action="delete"]').forEach(b => b.addEventListener('click', () => deletePost(b.dataset.id)));
+  $$('button[data-action="comments"]').forEach(b => b.addEventListener('click', () => openComments(b.dataset.id)));
+}
+
+// ---------- auth ----------
+function setMode(mode) {
+  isEditor = mode === 'editor';
+  document.getElementById('btnViewer').classList.toggle('active', !isEditor);
+  document.getElementById('btnEditor').classList.toggle('active', isEditor);
+  render();
+}
+document.getElementById('btnLogin').addEventListener('click', () => {
+  const pwd = document.getElementById('editorPassword').value;
+  if (pwd === 'cmu') { setMode('editor'); return; }
+  const msg = document.getElementById('loginMsg');
+  msg.textContent = 'รหัสผ่านไม่ถูกต้อง';
+  document.getElementById('editorPassword').classList.add('input-error');
+});
+document.getElementById('btnViewer').addEventListener('click', () => setMode('viewer'));
+document.getElementById('btnEditor').addEventListener('click', () => {
+  if (isEditor) { setMode('editor'); return; }
+  showOnly('editorLogin');
+  document.getElementById('loginMsg').textContent = '';
+  document.getElementById('editorPassword').value = '';
+});
+
+// ---------- file -> data URL ----------
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+// ---------- CRUD ----------
+document.getElementById('btnNewPost').addEventListener('click', () => openForm());
+document.getElementById('btnCancelPost').addEventListener('click', () => resetForm());
+document.getElementById('btnLogout').addEventListener('click', () => { setMode('viewer'); });
+
+function resetForm() {
+  editingId = null;
+  document.getElementById('formTitle').textContent = 'เพิ่มสมาชิก / สร้างกระทู้ใหม่';
+  ['pAuthor','pFootWash','pImageUrl','pSpray'].forEach(i => { const el = document.getElementById(i); if(el) el.value=''; });
+  document.getElementById('pImageFile').value = '';
+  ['pShoeCare','pSockCare'].forEach(i => { const el = document.getElementById(i); if(el) el.value=''; });
+  render();
+}
+function openForm(id) {
+  editingId = id || null;
+  document.getElementById('formTitle').textContent = id ? 'แก้ไขกระทู้' : 'เพิ่มสมาชิก / สร้างกระทู้ใหม่';
+  const setv = (k,v) => { const el = document.getElementById(k); if(el) el.value=v; };
+  if (id) {
+    const p = posts.find(x => x.id === id);
+    if (!p) return;
+    setv('pAuthor', p.author || '');
+    setv('pFootWash', p.footWash ?? '');
+    setv('pShoeCare', p.shoeCare || '');
+    setv('pSockCare', p.sockCare || '');
+    setv('pSpray', p.spray ?? '');
+    setv('pImageUrl', (p.imageData && !p.imageData.startsWith('data:')) ? p.imageData : '');
+    document.getElementById('pImageFile').value = '';
+  } else {
+    setv('pAuthor','');
+    setv('pFootWash','');
+    setv('pImageUrl','');
+    setv('pSpray','');
+    document.getElementById('pImageFile').value = '';
+    setv('pShoeCare','');
+    setv('pSockCare','');
+  }
+  showOnly('postForm');
+}
+document.getElementById('btnSavePost').addEventListener('click', async () => {
+  const author = (document.getElementById('pAuthor').value || '').trim();
+  const footWash = document.getElementById('pFootWash').value.trim();
+  const shoeCare = document.getElementById('pShoeCare').value;
+  const sockCare = document.getElementById('pSockCare').value;
+  const spray = document.getElementById('pSpray').value.trim();
+  const fileInput = document.getElementById('pImageFile');
+  const imageUrl = (document.getElementById('pImageUrl').value || '').trim();
+  let imageData = posts.find(p => p.id === editingId)?.imageData || '';
+  if (fileInput && fileInput.files && fileInput.files[0]) {
+    try { imageData = await readFileAsDataUrl(fileInput.files[0]); }
+    catch (e) { alert('ไม่สามารถอ่านไฟล์รูปภาพได้'); return; }
+  } else if (imageUrl) { imageData = imageUrl; }
+  if (!author) { alert('กรุณากรอกชื่อผู้ใช้งาน'); return; }
+  if (editingId) {
+    const post = posts.find(p => p.id === editingId);
+    if (post) Object.assign(post, { author, footWash, shoeCare, sockCare, spray, imageData });
+  } else {
+    posts.push({ id: uid(), author, footWash, shoeCare, sockCare, spray, imageData, comments: [] });
+  }
+  savePosts(posts);
+  resetForm();
+});
+function deletePost(id) {
+  if (!confirm('ลบกระทู้นี้?')) return;
+  posts = posts.filter(p => p.id !== id);
+  savePosts(posts);
+  render();
+}
+
+// ---------- comments ----------
+function renderComments(post) {
+  const area = document.getElementById('commentsArea');
+  area.innerHTML = '';
+  const list = post.comments || [];
+  if (!list.length) { area.innerHTML = '<p class="avg">ยังไม่มีความคิดเห็น</p>'; }
+  list.forEach((c) => {
+    const div = document.createElement('div');
+    div.className = 'commentBlock';
+    div.innerHTML = `<div class="commentHeader"><span>${escapeHtml(c.name || 'ผู้ใช้งานไม่ระบุชื่อ')}</span><span>คะแนน: ${Number(c.rating || 0).toFixed(1)}</span></div><div class="commentText">${escapeHtml(c.text)}</div>`;
+    area.appendChild(div);
+  });
+  const avgEl = document.createElement('div');
+  avgEl.className = 'avg';
+  avgEl.innerHTML = `คะแนนเฉลี่ยของกระทู้นี้: <strong>${avgLabel(post)}</strong> / 10`;
+  area.appendChild(avgEl);
+}
+function openComments(id) {
+  currentPostId = id;
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  renderComments(post);
+  showOnly('commentsPanel');
+  setTimeout(() => document.getElementById('commentsPanel')?.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+}
+document.getElementById('btnAddComment').addEventListener('click', () => {
+  const text = (document.getElementById('commentText').value || '').trim();
+  const name = (document.getElementById('commentName').value || '').trim();
+  const rating = Number(document.getElementById('commentRating').value);
+  if (!text) { alert('กรุณากรอกความคิดเห็น'); return; }
+  const post = posts.find(p => p.id === currentPostId);
+  if (!post) return;
+  post.comments = post.comments || [];
+  post.comments.push({ name, text, rating });
+  savePosts(posts);
+  document.getElementById('commentText').value = '';
+  renderComments(post);
+  render();
+});
+document.getElementById('ratingValue').addEventListener('input', e => document.getElementById('ratingValue').textContent = e.target.value);
+document.getElementById('btnCloseComments').addEventListener('click', () => { setMode(isEditor ? 'editor' : 'viewer'); });
+
+// ---------- build script ----------
+document.addEventListener('DOMContentLoaded', () => {
+  const rating = document.getElementById('commentRating');
+  const ratingVal = document.getElementById('ratingValue');
+  if (rating && ratingVal) ratingVal.textContent = rating.value;
+
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) { try { posts = JSON.parse(saved) || []; } catch (e) { posts = []; } }
+  render();
+});
+
+// ---------- export build helpers (optional for offline distribution) ----------
+if (typeof window !== 'undefined') {
+  window.buildSite = {
+    bundle() {
+      const html = document.documentElement.outerHTML;
+      const css = localStorage.getItem('cmu_forum_style_v1') || '';
+      const js = localStorage.getItem('cmu_forum_app_v1') || '';
+      return { html, css, js };
+    }
+  };
+}
+
+// Pre-render panel on load
+render();
+
+  </script>
+</body>
+</html>
