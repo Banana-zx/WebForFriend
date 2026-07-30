@@ -182,8 +182,15 @@ document.getElementById('btnSavePost').addEventListener('click', async () => {
   const current = posts.find(p => p.id === editingId);
   if (current && current.imageData) imageData = current.imageData;
   if (fileInput && fileInput.files && fileInput.files[0]) {
-    try { imageData = await readFileAsDataURL(fileInput.files[0]); }
-    catch (e) { alert('ไม่สามารถอ่านไฟล์รูปภาพได้'); return; }
+    try {
+      imageData = await readFileAsDataURL(fileInput.files[0]);
+      if (!imageData || !imageData.startsWith('data:')) {
+        throw new Error('รูปภาพไม่ถูกต้อง');
+      }
+    } catch (e) {
+      alert('อ่านไฟล์รูปภาพไม่สำเร็จ: ' + (e && e.message ? e.message : 'unknown'));
+      return;
+    }
   } else if (imageUrl) { imageData = imageUrl; }
   if (!author) { alert('กรุณากรอกชื่อผู้ใช้งาน'); return; }
   if (editingId) {
