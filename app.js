@@ -55,7 +55,7 @@ function avgLabel(post) {
   const a = post && post.comments ? avg(post.comments) : 0;
   return a ? a.toFixed(1) : '-';
 }
-function cardHtml(post, mode) {
+function cardHtml(post, mode, idx) {
   const commentCount = ((post && post.comments) ? post.comments : []).length;
   const isV = mode === 'viewer';
   const editButtons = !isV ? `
@@ -64,6 +64,7 @@ function cardHtml(post, mode) {
   ` : '';
   return `
     <article class="postCard" data-id="${post.id}">
+      <div class="postIndex">#${idx + 1}</div>
       ${post.imageData ? `<img src="${escapeHtml(post.imageData)}" alt="รูปผู้ใช้งาน" loading="lazy" />` : '<div style="height:220px;background:#eef2ff;border-radius:12px"></div>'}
       <div class="postMeta">ผู้สร้างกระทู้: <strong>${escapeHtml(post.author || '')}</strong></div>
       <div class="postTitle">ติดตามผลโปรแกรม Clean & care with HerbAura Foot Spray</div>
@@ -88,12 +89,14 @@ async function render() {
   if (isEditor) {
     showOnly('editorPanel');
     const container = document.getElementById('postsListEditable');
-    container.innerHTML = posts.length ? posts.map(p => cardHtml(p, 'editor')).join('') : '<p class="avg">ยังไม่มีกระทู้</p>';
+    const count = posts.length ? posts.map((p, i) => cardHtml(p, 'editor', i)).join('') : '<p class="avg">ยังไม่มีกระทู้</p>';
+    container.innerHTML = (posts.length ? '<div class="postCount">จำนวนกระทู้ทั้งหมด: ' + posts.length + ' รายการ</div>' : '') + count;
     bindPostActions();
   } else {
     showOnly('viewerPanel');
     const container = document.getElementById('postsList');
-    container.innerHTML = posts.length ? posts.map(p => cardHtml(p, 'viewer')).join('') : '<p class="avg">ยังไม่มีกระทู้</p>';
+    const count = posts.length ? posts.map((p, i) => cardHtml(p, 'viewer', i)).join('') : '<p class="avg">ยังไม่มีกระทู้</p>';
+    container.innerHTML = (posts.length ? '<div class="postCount">จำนวนกระทู้ทั้งหมด: ' + posts.length + ' รายการ</div>' : '') + count;
     bindPostActions();
   }
 }
