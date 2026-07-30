@@ -124,9 +124,10 @@ document.getElementById('btnEditor').addEventListener('click', () => {
 // ========== read file/dataurl ==========
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
+    if (!file) return reject(new Error('ไฟล์ไม่ถูกต้อง'));
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
+    reader.onerror = () => reject(reader.error || new Error('อ่านไฟล์ไม่สำเร็จ'));
     reader.readAsDataURL(file);
   });
 }
