@@ -37,6 +37,9 @@
       <section id="editorPanel" class="panel hidden" aria-label="จัดการกระทู้">
         <div class="actions">
           <button id="btnNewPost" type="button">+ เพิ่มสมาชิก / สร้างกระทู้ใหม่</button>
+          <button id="btnBackup" type="button">สำรองข้อมูล (JSON)</button>
+          <label for="restoreFile" class="btn">นำเข้าข้อมูล</label>
+          <input id="restoreFile" type="file" accept="application/json" style="display:none" />
           <button id="btnLogout" type="button">Logout</button>
         </div>
         <div id="postsListEditable" class="postsList"></div>

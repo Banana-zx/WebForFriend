@@ -247,6 +247,33 @@ document.getElementById('btnAddComment').addEventListener('click', async () => {
   if (post) await renderComments(post);
   render();
 });
+document.getElementById('btnBackup')?.addEventListener('click', async () => {
+  const r = await fetch('/api/backup');
+  const data = await r.json();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'forum-backup.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+document.getElementById('restoreFile')?.addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!Array.isArray(data)) throw new Error('invalid');
+    if (!confirm('ข้อมูลในระบบจะถูกเขียนทับ ดำเนินการต่อ?')) return;
+    await apiPost('/api/restore', data);
+    alert('นำเข้าข้อมูลเรียบร้อย');
+    render();
+  } catch (err) {
+    alert('ไฟล์ไม่ถูกต้อง');
+  }
+  e.target.value = '';
+});
+
 document.getElementById('commentRating').addEventListener('input', e => document.getElementById('ratingValue').textContent = e.target.value);
 document.getElementById('btnCloseComments').addEventListener('click', () => { setMode(isEditor ? 'editor' : 'viewer'); });
 
