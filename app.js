@@ -274,6 +274,45 @@ document.getElementById('restoreFile')?.addEventListener('change', async e => {
   e.target.value = '';
 });
 
+const STORAGE_KEY = 'forum_local_cache_v1';
+async function loadPosts() {
+  try {
+    posts = await apiGet('/api/posts');
+  } catch (e) {
+    posts = [];
+  }
+  if (!posts.length) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) posts = JSON.parse(raw);
+    } catch {}
+  }
+}
+function saveLocalCache() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+  } catch {}
+}
+loadPosts().then(render);
+const _origApiPost = apiPost;
+apiPost = async function(url, body) {
+  const result = await _origApiPost(url, body);
+  if (url === '/api/posts' || url.includes('/comments')) saveLocalCache();
+  return result;
+};
+const _origApiPut = apiPut;
+apiPut = async function(url, body) {
+  const result = await _origApiPut(url, body);
+  if (url.includes('/api/posts/') && !url.includes('/comments')) saveLocalCache();
+  return result;
+};
+const _origApiDel = apiDel;
+apiDel = async function(url) {
+  const result = await _origApiDel(url);
+  if (url.includes('/api/posts/')) saveLocalCache();
+  return result;
+};
+
 document.getElementById('commentRating').addEventListener('input', e => document.getElementById('ratingValue').textContent = e.target.value);
 document.getElementById('btnCloseComments').addEventListener('click', () => { setMode(isEditor ? 'editor' : 'viewer'); });
 
