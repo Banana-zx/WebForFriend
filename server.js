@@ -99,8 +99,32 @@ app.post('/api/posts/:id/comments', (req, res) => {
 });
 
 // ---------- expose local IP + QR ----------
+app.get('/api/backup', (req, res) => {
+  db.all('SELECT * FROM posts ORDER BY rowid DESC', (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+    const backup = rows.map(r => ({ ...r, comments: JSON.parse(r.comments || '[]') }));
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', 'attachment; filename="forum-backup.json"');
+    res.json(backup);
+  });
+});
+
+app.post('/api/restore', express.json(), (req, res) => {
+  const posts = req.body;
+  if (!Array.isArray(posts)) return res.status(400).json({ error: 'invalid json' });
+  db.serialize(() => {
+    db.run('DELETE FROM posts');
+    const stmt = db.prepare(`INSERT INTO posts (id, author, footWash, shoeCare, sockCare, spray, imageData, comments) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+    posts.forEach(p => {
+      stmt.run(p.id || ('p_' + Date.now() + '_' + Math.random().toString(36).slice(2,8)), p.author || '', p.footWash || '', p.shoeCare || '', p.sockCare || '', p.spray || '', p.imageData || '', JSON.stringify(p.comments || []));
+    });
+    stmt.finalize();
+  });
+  res.json({ success: true });
+});
+
+// ---------- expose local IP + QR ----------
 app.get('/qr', (req, res) => {
-  const nets = require('os').networkInterfaces();
   let localIP = '127.0.0.1';
   for (const name of Object.keys(nets)) {
     for (const iface of nets[name]) {
