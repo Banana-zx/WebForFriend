@@ -15,7 +15,12 @@ app.use(express.static(path.join(__dirname)));
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+const fs = require('fs');
+
 const DB_PATH = path.join(__dirname, 'data', 'forum.sqlite');
+const DB_DIR = path.dirname(DB_PATH);
+if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
+
 const db = new sqlite3.Database(DB_PATH);
 
 db.serialize(() => {
