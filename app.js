@@ -122,7 +122,7 @@ document.getElementById('btnEditor').addEventListener('click', () => {
 });
 
 // ========== read file/dataurl ==========
-function readFileAsDataUrl(file) {
+function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     if (!file) return reject(new Error('ไฟล์ไม่ถูกต้อง'));
     const reader = new FileReader();
