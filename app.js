@@ -247,7 +247,7 @@ document.getElementById('btnAddComment').addEventListener('click', async () => {
   if (post) await renderComments(post);
   render();
 });
-document.getElementById('ratingValue').addEventListener('input', e => document.getElementById('ratingValue').textContent = e.target.value);
+document.getElementById('commentRating').addEventListener('input', e => document.getElementById('ratingValue').textContent = e.target.value);
 document.getElementById('btnCloseComments').addEventListener('click', () => { setMode(isEditor ? 'editor' : 'viewer'); });
 
 render();
